@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Sign in - CodeForge{% endblock %}
+{% block content %}
+
+<section class="auth-section">
+    <div class="auth-card">
+        <div class="gate-tag">Welcome back</div>
+        <h1>Sign in</h1>
+        <form method="POST" class="stack-form">
+            <label>
+                Username or email
+                <input type="text" name="username" required autofocus>
+            </label>
+            <label>
+                Password
+                <input type="password" name="password" required>
+            </label>
+            <button type="submit" class="solid-btn full-width">Sign in</button>
+        </form>
+        <p class="auth-switch">New here? <a href="{{ url_for('register') }}">Solve the entry problem</a></p>
+    </div>
+</section>
+
+{% endblock %}

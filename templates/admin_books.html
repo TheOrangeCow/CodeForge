@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Admin Books - CodeForge{% endblock %}
+{% block content %}
+
+<h1 class="page-title">Manage books</h1>
+<p class="page-sub"><a href="{{ url_for('admin_users') }}">← Manage users</a> ·
+    <a href="{{ url_for('admin_requests') }}">Book requests{% if pending_book_requests %} ({{ pending_book_requests }}){% endif %} →</a></p>
+
+<div class="two-col">
+    <div>
+        <h2 class="section-title-sm">Existing books</h2>
+        <table class="problem-table">
+            <thead>
+                <tr>
+                    <th>Icon</th>
+                    <th>Name</th>
+                    <th>Problems</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for b in books %}
+                <tr>
+                    <td>{{ b.icon }}</td>
+                    <td><a href="{{ url_for('book_view', slug=b.slug) }}">{{ b.name }}</a></td>
+                    <td>{{ b.approved_problems.count() }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div>
+        <h2 class="section-title-sm">New book</h2>
+        <form method="POST" class="stack-form">
+            <label>Name <input type="text" name="name" required minlength="2"></label>
+            <label>Icon <span class="dim">(one character/symbol)</span> <input type="text" name="icon" maxlength="2"
+                    placeholder="∑"></label>
+            <label>Description <textarea name="description" rows="3"></textarea></label>
+            <button type="submit" class="solid-btn">Create book</button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

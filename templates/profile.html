@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}{{ profile_user.username }} - CodeForge{% endblock %}
+{% block content %}
+
+<h1 class="page-title">
+    {{ profile_user.username }}
+    {% if profile_user.is_admin %}<span class="role-chip">admin</span>{% elif profile_user.is_reviewer %}<span
+        class="role-chip">reviewer</span>{% endif %}
+</h1>
+<div class="dash-stats">
+    <div><strong>{{ profile_user.score }}</strong><span>points</span></div>
+    <div><strong>{{ solved_problems|length }}</strong><span>problems solved</span></div>
+</div>
+
+<section class="section">
+    <h2 class="section-title-sm">Solved</h2>
+    {% if solved_problems %}
+    <div class="chip-list">
+        {% for p in solved_problems %}
+        <a class="problem-chip" href="{{ url_for('problem_view', slug=p.slug) }}">{{ p.book.name }} · {{ p.title }}</a>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="empty-note">No solves yet.</p>
+    {% endif %}
+</section>
+
+{% endblock %}

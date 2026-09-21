@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Solve to Join - CodeForge{% endblock %}
+{% block content %}
+
+<section class="auth-section">
+    <div class="auth-card gate-card">
+        <div class="gate-tag">Entry Problem</div>
+        <h1>Before you sign up, solve this.</h1>
+        <p class="gate-explain">
+            No account gets created without a correct answer first. Your entry problem is the
+            first problem of one of our books. Don't like this one? Draw another book's below.
+        </p>
+
+        {% if gate.label %}<div class="gate-source">{{ gate.label }}{% if gate.title %} - {{ gate.title }}{% endif %}</div>{% endif %}
+        <pre class="gate-prompt">{{ gate.prompt }}</pre>
+
+        <form method="POST" class="stack-form">
+            <label>
+                Your answer to the entry problem
+                <input type="text" name="gate_answer" autocomplete="off" required autofocus>
+            </label>
+
+            <div class="field-divider">Once you're in</div>
+
+            <label>
+                Username
+                <input type="text" name="username" value="{{ username or '' }}" minlength="3" required>
+            </label>
+            <label>
+                Email
+                <input type="email" name="email" value="{{ email or '' }}" required>
+            </label>
+            <label>
+                Password
+                <input type="password" name="password" minlength="6" required>
+            </label>
+
+            <button type="submit" class="solid-btn full-width">Submit &amp; create account</button>
+        </form>
+
+        <a class="text-link" href="{{ url_for('register_new_puzzle') }}">↻ Give me a different book's problem</a>
+        <p class="auth-switch">Already have an account? <a href="{{ url_for('login') }}">Sign in</a></p>
+    </div>
+</section>
+
+{% endblock %}

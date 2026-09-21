@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Leaderboard - CodeForge{% endblock %}
+{% block content %}
+
+<h1 class="page-title">Leaderboard</h1>
+<p class="page-sub">Ranked by total points from correctly solved problems.</p>
+
+<table class="problem-table">
+    <thead>
+        <tr>
+            <th class="col-num">Rank</th>
+            <th>Solver</th>
+            <th>Solved</th>
+            <th class="col-pts">Points</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for u in users %}
+        <tr class="{{ 'row-solved' if current_user.is_authenticated and u.id == current_user.id else '' }}">
+            <td class="col-num">{{ loop.index }}</td>
+            <td>
+                <a href="{{ url_for('user_profile', username=u.username) }}">{{ u.username }}</a>
+                {% if u.is_admin %}<span class="role-chip">admin</span>{% elif u.is_reviewer %}<span
+                    class="role-chip">reviewer</span>{% endif %}
+            </td>
+            <td>{{ u.solved_count }}</td>
+            <td class="col-pts">{{ u.score }}</td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="4" class="empty-note">No solvers yet.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

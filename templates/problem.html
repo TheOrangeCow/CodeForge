@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}{{ problem.title }} - CodeForge{% endblock %}
+{% block content %}
+
+<section class="problem-page">
+    <div class="problem-breadcrumb">
+        <a href="{{ url_for('book_view', slug=problem.book.slug) }}">{{ problem.book.name }}</a>
+        <span>/</span>
+        <span>Problem {{ "%02d"|format(problem.number) }}</span>
+        {% if problem.status != 'approved' %}<span class="status-chip status-{{ problem.status }}">{{ problem.status
+            }}</span>{% endif %}
+    </div>
+
+    <h1>{{ problem.title }}</h1>
+
+    <div class="problem-meta-row">
+        <span class="diff-dots" title="difficulty {{ problem.difficulty }}/5">
+            {% for i in range(5) %}<i class="{{ 'on' if i < problem.difficulty else '' }}"></i>{% endfor %}
+        </span>
+        <span class="dim">{{ problem.points }} points</span>
+        <span class="dim">·</span>
+        <span class="dim">{{ problem.solver_count }} solver{{ "s" if problem.solver_count != 1 else "" }}</span>
+        {% if problem.avg_rating %}
+        <span class="dim">·</span>
+        <span class="dim">★ {{ problem.avg_rating }} ({{ problem.rating_count }})</span>
+        {% endif %}
+    </div>
+
+    <div class="problem-statement">{{ problem.statement }}</div>
+
+    {% if solved %}
+    <div class="solved-banner">✓ You solved this problem{% if attempts > 1 %} in {{ attempts }} attempts{% endif %}.
+    </div>
+    {% else %}
+    <form method="POST" class="answer-form">
+        <label>
+            Your answer
+            <input type="text" name="answer" autocomplete="off" required autofocus>
+        </label>
+        <button type="submit" class="solid-btn">Submit answer</button>
+        {% if attempts %}<span class="dim attempt-count">{{ attempts }} attempt{{ "s" if attempts != 1 else "" }} so
+            far</span>{% endif %}
+    </form>
+    {% endif %}
+
+    {% if solved %}
+    <div class="rating-block">
+        <span>Rate this problem:</span>
+        <form method="POST" action="{{ url_for('rate_problem', slug=problem.slug) }}" class="star-form">
+            {% for i in range(1,6) %}
+            <button type="submit" name="stars" value="{{ i }}"
+                class="star-btn {{ 'star-on' if my_rating and i <= my_rating else '' }}">★</button>
+            {% endfor %}
+        </form>
+        {% if my_rating %}<span class="dim">you rated {{ my_rating }}/5</span>{% endif %}
+    </div>
+    {% endif %}
+
+    {% if feedback %}
+    <div class="feedback-block">
+        <h2 class="section-title-sm">Reviewer feedback</h2>
+        <div class="review-list">
+            {% for r in feedback %}
+            <div class="review-item review-{{ r.decision }}">
+                <strong>{{ r.reviewer.username }}</strong> — {{ r.decision }}
+                {% if r.comment %}<p>{{ r.comment }}</p>{% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% elif problem.status != 'approved' and current_user.is_authenticated and current_user.id == problem.author_id %}
+    <p class="empty-note">No reviewer feedback yet.</p>
+    {% endif %}
+
+    <div class="problem-footer-meta">
+        <span class="dim">Written by <a href="{{ url_for('user_profile', username=problem.author.username) }}">{{
+                problem.author.username }}</a></span>
+    </div>
+</section>
+
+{% endblock %}

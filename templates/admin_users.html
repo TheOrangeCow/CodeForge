@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Admin Users - CodeForge{% endblock %}
+{% block content %}
+
+<h1 class="page-title">Manage users</h1>
+<p class="page-sub">Grant reviewer rights to trusted solvers so they can write and review problems. <a
+        href="{{ url_for('admin_books') }}">Manage books →</a> · <a href="{{ url_for('admin_requests') }}">Book requests{% if pending_book_requests %} ({{ pending_book_requests }}){% endif %} →</a></p>
+
+<table class="problem-table">
+    <thead>
+        <tr>
+            <th>User</th>
+            <th>Points</th>
+            <th>Solved</th>
+            <th>Reviewer</th>
+            <th>Admin</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for u in users %}
+        <tr>
+            <td>{{ u.username }} <span class="dim">{{ u.email }}</span></td>
+            <td>{{ u.score }}</td>
+            <td>{{ u.solved_count }}</td>
+            <td>
+                <form method="POST" class="inline-form">
+                    <input type="hidden" name="user_id" value="{{ u.id }}">
+                    {% if u.is_reviewer %}
+                    <button type="submit" name="action" value="revoke_reviewer" class="mini-btn">Revoke</button>
+                    {% else %}
+                    <button type="submit" name="action" value="make_reviewer"
+                        class="mini-btn mini-btn-on">Grant</button>
+                    {% endif %}
+                </form>
+            </td>
+            <td>
+                <form method="POST" class="inline-form">
+                    <input type="hidden" name="user_id" value="{{ u.id }}">
+                    {% if u.is_admin %}
+                    <button type="submit" name="action" value="revoke_admin" class="mini-btn" {{ 'disabled' if
+                        u.id==current_user.id else '' }}>Revoke</button>
+                    {% else %}
+                    <button type="submit" name="action" value="make_admin" class="mini-btn mini-btn-on">Grant</button>
+                    {% endif %}
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

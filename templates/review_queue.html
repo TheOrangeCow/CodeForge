@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Review Board - CodeForge{% endblock %}
+{% block content %}
+
+<h1 class="page-title">Review board</h1>
+<p class="page-sub">Pending problems need {{ REQUIRED_APPROVALS }} approvals to publish. You can't review your own
+    submissions.</p>
+
+<table class="problem-table">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Book</th>
+            <th>Author</th>
+            <th>Approvals</th>
+            <th>Rejections</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for p in pending %}
+        <tr>
+            <td>{{ p.title }}</td>
+            <td>{{ p.book.name }}</td>
+            <td>{{ p.author.username }}</td>
+            <td>{{ p.approvals }}/{{ REQUIRED_APPROVALS }}</td>
+            <td>{{ p.rejections }}/{{ REQUIRED_APPROVALS }}</td>
+            <td><a class="text-link" href="{{ url_for('review_problem', slug=p.slug) }}">Review →</a></td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="6" class="empty-note">Nothing waiting on review right now.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

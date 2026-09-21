@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}Reviewing: {{ problem.title }} - CodeForge{% endblock %}
+{% block content %}
+
+<div class="problem-breadcrumb">
+    <a href="{{ url_for('review_queue') }}">Review board</a><span>/</span><span>{{ problem.title }}</span>
+</div>
+
+<h1>{{ problem.title }}</h1>
+<div class="problem-meta-row">
+    <span class="dim">{{ problem.book.name }}</span>
+    <span class="dim">·</span>
+    <span class="dim">written by <a href="{{ url_for('user_profile', username=problem.author.username) }}">{{ problem.author.username }}</a></span>
+    <span class="dim">·</span>
+    <span class="diff-dots" title="difficulty {{ problem.difficulty }}/5">
+        {% for i in range(5) %}<i class="{{ 'on' if i < problem.difficulty else '' }}"></i>{% endfor %}
+    </span>
+    <span class="dim">{{ problem.points }} pts</span>
+    <span class="status-chip status-{{ problem.status }}">{{ problem.status }}</span>
+</div>
+
+<div class="problem-statement">{{ problem.statement }}</div>
+
+<div class="reviewer-panel">
+    <div class="reviewer-panel-row">
+        <div>
+            <span class="panel-label">Writer</span>
+            <a href="{{ url_for('user_profile', username=problem.author.username) }}">{{ problem.author.username }}</a>
+            <span class="dim">· submitted {{ problem.created_at.strftime('%d %b %Y') }}</span>
+        </div>
+        <div>
+            <span class="panel-label">Expected answer</span>
+            {% if problem.answer_text %}
+            <code class="answer-code">{{ problem.answer_text }}</code>
+            {% else %}
+            <span class="dim">not stored (submitted before answers were kept for review) — set it via Edit</span>
+            {% endif %}
+        </div>
+    </div>
+    <p class="dim panel-note">Only reviewers and admins can see the answer.</p>
+    {% if problem.last_edited_at %}
+    <p class="dim panel-note">Last edited by {{ problem.last_editor.username if problem.last_editor else 'a reviewer' }}
+        on {{ problem.last_edited_at.strftime('%d %b %Y, %H:%M') }} UTC.</p>
+    {% endif %}
+    {% if problem.status == "pending" %}
+    <a class="mini-btn mini-btn-on panel-edit" href="{{ url_for('review_edit', slug=problem.slug) }}">Edit problem</a>
+    {% endif %}
+</div>
+
+<div class="review-progress">
+    <span class="approve-count">{{ problem.approvals }} approve</span>
+    <span class="reject-count">{{ problem.rejections }} reject</span>
+    <span class="dim">({{ REQUIRED_APPROVALS }} needed either way)</span>
+</div>
+
+{% if all_reviews %}
+<div class="review-list">
+    {% for r in all_reviews %}
+    <div class="review-item review-{{ r.decision }}">
+        <strong>{{ r.reviewer.username }}</strong> — {{ r.decision }}
+        {% if r.comment %}<p>{{ r.comment }}</p>{% endif %}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+{% if problem.status == "pending" %}
+<form method="POST" class="stack-form">
+    <label>
+        Comments {% if my_review %}(editing your existing review){% endif %}
+        <textarea name="comment" rows="3">{{ my_review.comment if my_review else '' }}</textarea>
+    </label>
+    <div class="review-buttons">
+        <button type="submit" name="decision" value="approve" class="solid-btn approve-btn">Approve</button>
+        <button type="submit" name="decision" value="reject" class="solid-btn reject-btn">Reject</button>
+    </div>
+</form>
+{% else %}
+<p class="empty-note">This problem has already been {{ problem.status }} - no further review needed.</p>
+{% endif %}
+
+{% endblock %}

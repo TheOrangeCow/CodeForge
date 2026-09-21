@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}Editing: {{ problem.title }} - CodeForge{% endblock %}
+{% block content %}
+
+<div class="problem-breadcrumb">
+    <a href="{{ url_for('review_queue') }}">Review board</a><span>/</span>
+    <a href="{{ url_for('review_problem', slug=problem.slug) }}">{{ problem.title }}</a><span>/</span><span>Edit</span>
+</div>
+
+<h1 class="page-title" style="padding-top:0">Edit problem</h1>
+<p class="page-sub">
+    Written by <a href="{{ url_for('user_profile', username=problem.author.username) }}">{{ problem.author.username }}</a>.
+    Your changes are saved on the pending problem and your name is recorded as the last editor. Reviews already
+    submitted are kept.
+</p>
+
+<form method="POST" class="stack-form wide-form">
+    <label>
+        Title
+        <input type="text" name="title" value="{{ form.title or '' }}" required minlength="4">
+    </label>
+
+    <div class="form-row">
+        <label>
+            Book
+            <select name="book_id" required>
+                {% for b in books %}
+                <option value="{{ b.id }}" {{ 'selected' if form.book_id|string==b.id|string else '' }}>{{ b.name }}
+                </option>
+                {% endfor %}
+            </select>
+        </label>
+        <label>
+            Difficulty (1–5)
+            <input type="number" name="difficulty" min="1" max="5" value="{{ form.difficulty or 2 }}" required>
+        </label>
+        <label>
+            Points
+            <input type="number" name="points" min="1" value="{{ form.points or 10 }}" required>
+        </label>
+    </div>
+
+    <label>
+        Problem statement
+        <textarea name="statement" rows="10" required minlength="20">{{ form.statement or '' }}</textarea>
+    </label>
+
+    <label>
+        Correct answer <span class="dim">(exact match, case-insensitive)</span>
+        <input type="text" name="answer" value="{{ form.answer or '' }}" autocomplete="off"
+            {{ 'required' if problem.answer_text else '' }}>
+    </label>
+    {% if not problem.answer_text %}
+    <p class="dim">No answer was stored for this problem. Leave this blank to keep whatever the writer originally set,
+        or enter the answer to make it visible to reviewers. Entering a different answer replaces the current one.</p>
+    {% endif %}
+
+    <div class="review-buttons">
+        <button type="submit" class="solid-btn">Save changes</button>
+        <a class="ghost-btn" href="{{ url_for('review_problem', slug=problem.slug) }}">Cancel</a>
+    </div>
+</form>
+
+{% endblock %}

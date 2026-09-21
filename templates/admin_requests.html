@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Book requests - CodeForge{% endblock %}
+{% block content %}
+
+<h1 class="page-title">Book requests</h1>
+<p class="page-sub"><a href="{{ url_for('admin_users') }}">← Manage users</a> ·
+    <a href="{{ url_for('admin_books') }}">Manage books</a></p>
+
+<section class="section">
+    <h2 class="section-title-sm">Pending ({{ pending|length }})</h2>
+    {% for r in pending %}
+    <div class="request-item request-admin">
+        <div class="request-head">
+            <strong>{{ r.name }}</strong>
+            <span class="dim">requested by <a href="{{ url_for('user_profile', username=r.user.username) }}">{{ r.user.username }}</a>
+                on {{ r.created_at.strftime('%d %b %Y') }}</span>
+        </div>
+        {% if r.description %}<p>{{ r.description }}</p>{% endif %}
+        {% if r.reason %}<p class="dim"><em>Why:</em> {{ r.reason }}</p>{% endif %}
+
+        <form method="POST" class="request-form">
+            <input type="hidden" name="request_id" value="{{ r.id }}">
+            <input type="text" name="name" value="{{ r.name }}" maxlength="80" aria-label="Book name">
+            <input type="text" name="icon" maxlength="2" placeholder="∑" aria-label="Icon" class="icon-input">
+            <input type="text" name="admin_note" placeholder="Note to requester (optional)" aria-label="Note">
+            <button type="submit" name="action" value="approve" class="mini-btn mini-btn-on">Create book</button>
+            <button type="submit" name="action" value="decline" class="mini-btn">Decline</button>
+        </form>
+    </div>
+    {% else %}
+    <p class="empty-note">No pending requests.</p>
+    {% endfor %}
+</section>
+
+<section class="section">
+    <h2 class="section-title-sm">Handled</h2>
+    {% if handled %}
+    <table class="problem-table">
+        <thead>
+            <tr>
+                <th>Book</th>
+                <th>Requested by</th>
+                <th>Status</th>
+                <th>Note</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for r in handled %}
+            <tr>
+                <td>{{ r.name }}</td>
+                <td>{{ r.user.username }}</td>
+                <td><span class="status-chip status-{{ r.status }}">{{ r.status }}</span></td>
+                <td class="dim">{{ r.admin_note or '—' }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="empty-note">Nothing handled yet.</p>
+    {% endif %}
+</section>
+
+{% endblock %}

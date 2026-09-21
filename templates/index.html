@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}CodeForge{% endblock %}
+{% block content %}
+
+<section class="hero">
+    <div class="hero-num">01</div>
+    <h1>Earn your seat.<br>Then earn your rank.</h1>
+    <p class="hero-sub">
+        CodeForge is a set of programming and mathematical problems, organized into
+        books, written and vetted by the community.
+        To join, solve the first problem of any one of the books &mdash; no solve, no account.
+    </p>
+    <div class="hero-stats">
+        <div><strong>{{ stats.problems }}</strong><span>live problems</span></div>
+        <div><strong>{{ stats.members }}</strong><span>solvers registered</span></div>
+        <div><strong>{{ stats.solves }}</strong><span>correct submissions</span></div>
+    </div>
+    {% if not current_user.is_authenticated %}
+    <a class="solid-btn hero-cta" href="{{ url_for('register') }}">Attempt the entry problem →</a>
+    {% endif %}
+</section>
+
+<section id="books" class="section">
+    <h2 class="section-title"><span class="section-num">02</span> Problem books</h2>
+    <p class="section-sub">Each book is a themed set. Missing a topic? <a href="{{ url_for('request_book') }}">Request a new book</a>.</p>
+    <div class="book-grid">
+        {% for book in books %}
+        <a class="book-card" href="{{ url_for('book_view', slug=book.slug) }}">
+            <div class="book-icon">{{ book.icon }}</div>
+            <h3>{{ book.name }}</h3>
+            <p>{{ book.description }}</p>
+            <div class="book-meta">{{ book.approved_problems.count() }} problems</div>
+        </a>
+        {% else %}
+        <p class="empty-note">No books yet.</p>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="section">
+    <h2 class="section-title"><span class="section-num">03</span> Recently published</h2>
+    <div class="recent-list">
+        {% for p in recent %}
+        <a class="recent-row" href="{{ url_for('problem_view', slug=p.slug) }}">
+            <span class="recent-book">{{ p.book.name }}</span>
+            <span class="recent-title">{{ p.title }}</span>
+            <span class="diff-dots" title="difficulty {{ p.difficulty }}/5">
+                {% for i in range(5) %}<i class="{{ 'on' if i < p.difficulty else '' }}"></i>{% endfor %}
+            </span>
+            <span class="recent-points">{{ p.points }} pts</span>
+        </a>
+        {% else %}
+        <p class="empty-note">Nothing published yet.</p>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="section how-it-works">
+    <h2 class="section-title"><span class="section-num">04</span> How the review board works</h2>
+    <div class="hiw-grid">
+        <div class="hiw-card">
+            <div class="hiw-step">Write</div>
+            <p>Members draft a problem: statement, difficulty, points and the checked answer.</p>
+        </div>
+        <div class="hiw-card">
+            <div class="hiw-step">Review</div>
+            <p>Two reviewers never the author independently read it and approve or reject the problem.</p>
+        </div>
+        <div class="hiw-card">
+            <div class="hiw-step">Publish</div>
+            <p>Once {{ REQUIRED_APPROVALS }} approvals land, the problem goes live in its book, numbered and ready.</p>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

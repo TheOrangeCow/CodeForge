@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}{{ book.name }} - CodeForge{% endblock %}
+{% block content %}
+
+<section class="book-header">
+    <div class="book-header-icon">{{ book.icon }}</div>
+    <div>
+        <h1>{{ book.name }}</h1>
+        <p>{{ book.description }}</p>
+    </div>
+</section>
+
+<table class="problem-table">
+    <thead>
+        <tr>
+            <th class="col-num">#</th>
+            <th>Title</th>
+            <th>Difficulty</th>
+            <th>Rating</th>
+            <th>Solvers</th>
+            <th class="col-pts">Points</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for p in problems %}
+        <tr class="{{ 'row-solved' if p.solved_by(current_user) else '' }}">
+            <td class="col-num">{{ "%02d"|format(p.number) }}</td>
+            <td>
+                <a href="{{ url_for('problem_view', slug=p.slug) }}">{{ p.title }}</a>
+                {% if p.solved_by(current_user) %}<span class="solved-check" title="You solved this">✓</span>{% endif %}
+            </td>
+            <td>
+                <span class="diff-dots" title="difficulty {{ p.difficulty }}/5">
+                    {% for i in range(5) %}<i class="{{ 'on' if i < p.difficulty else '' }}"></i>{% endfor %}
+                </span>
+            </td>
+            <td>{% if p.avg_rating %}★ {{ p.avg_rating }} <span class="dim">({{ p.rating_count }})</span>{% else %}<span
+                    class="dim">unrated</span>{% endif %}</td>
+            <td>{{ p.solver_count }}</td>
+            <td class="col-pts">{{ p.points }}</td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="6" class="empty-note">No problems published in this book yet.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

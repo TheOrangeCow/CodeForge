@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Request a book - CodeForge{% endblock %}
+{% block content %}
+
+<h1 class="page-title">Request a new book</h1>
+<p class="page-sub">Is there a topic you'd like to see problems on? Tell the admins and, if it fits, they'll open a new
+    book for it.</p>
+
+<div class="two-col">
+    <div>
+        <form method="POST" class="stack-form wide-form">
+            <label>
+                Book name
+                <input type="text" name="name" value="{{ form.name or '' }}" required minlength="2" maxlength="80"
+                    placeholder="e.g. Geometry, Bit Manipulation">
+            </label>
+            <label>
+                What would it cover? <span class="dim">(optional)</span>
+                <textarea name="description" rows="3"
+                    placeholder="A sentence or two, shown on the book card if approved.">{{ form.description or '' }}</textarea>
+            </label>
+            <label>
+                Why should we add it? <span class="dim">(optional)</span>
+                <textarea name="reason" rows="3">{{ form.reason or '' }}</textarea>
+            </label>
+            <button type="submit" class="solid-btn">Send request</button>
+        </form>
+    </div>
+
+    <div>
+        <h2 class="section-title-sm">Your requests</h2>
+        {% if my_requests %}
+        <div class="request-list">
+            {% for r in my_requests %}
+            <div class="request-item">
+                <div class="request-head">
+                    <strong>{{ r.name }}</strong>
+                    <span class="status-chip status-{{ r.status }}">{{ r.status }}</span>
+                </div>
+                {% if r.admin_note %}<p class="dim">Admin note: {{ r.admin_note }}</p>{% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="empty-note">You haven't requested any books yet.</p>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}
