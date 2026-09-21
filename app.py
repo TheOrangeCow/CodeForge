@@ -40,7 +40,7 @@ from gate import new_gate_puzzle
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 app = Flask(__name__)
-app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "dev-secret-change-me")
+app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY")
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + os.path.join(
     BASE_DIR, "codeforge.db"
 )
@@ -103,14 +103,6 @@ def inject_globals():
         "now": datetime.utcnow(),
         "pending_book_requests": pending_requests,
     }
-
-
-# entry problem (sign-up gate)
-#
-# Registration is gated by the *first* problem of one of the books (the lowest
-# numbered approved problem in a randomly chosen book). If no book has a
-# published problem yet, we fall back to the generated puzzle in gate.py.
-
 
 def first_problems():
     firsts = []
@@ -252,7 +244,6 @@ def problem_view(slug):
     if current_user.is_authenticated:
         attempts = problem.submissions.filter_by(user_id=current_user.id).count()
 
-    # Writers can see what reviewers said about their (not yet published) problem.
     feedback = []
     if (
         problem.status != "approved"
@@ -833,12 +824,10 @@ def migrate_db():
 
 def ensure_db():
     with app.app_context():
-        db.create_all()  # creates any missing tables (e.g. book_request)
-        migrate_db()  # adds any missing columns to existing tables
+        db.create_all()
+        migrate_db()
 
 
-# Runs on import so the schema is up to date however the app is started
-# (python app.py, flask run, gunicorn...).
 ensure_db()
 
 
