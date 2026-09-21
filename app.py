@@ -305,6 +305,12 @@ def register():
 
         errors = []
         gate_ok = gate_is_correct(gate_answer)
+
+        if not request.form.get('agree_terms'):
+            errors.append("You must agree to the Terms and Conditions and the Privacy Policy to register.")
+            
+
+        
         if not gate_ok:
             errors.append(
                 "That's not the right answer to the entry problem - give it another go."

@@ -34,10 +34,18 @@
                 Password
                 <input type="password" name="password" minlength="6" required>
             </label>
+            <div style="margin-bottom: 15px;">
+                <input type="checkbox" id="agree_terms" name="agree_terms" required>
+                <label for="agree_terms">
+                    I have read and agree to the 
+                    <a href="/terms" target="_blank">Terms and Conditions </a> and the <a href="https://codeforge.theorangecow.org/pp">Privacy Policy.</a>
+                </label>
+            </div>
+
 
             <button type="submit" class="solid-btn full-width">Submit &amp; create account</button>
         </form>
-        <p class="auth-switch">By sign up you are agreeing to the <a href="https://codeforge.theorangecow.org/tandc">Terms and Conditions.</a></p>
+        <p class="auth-switch">By sign up you are agreeing to the <a href="https://codeforge.theorangecow.org/tandc">Terms and Conditions</a> and the <a href="https://codeforge.theorangecow.org/pp">Privacy Policy.</a></p>
         <a class="text-link" href="{{ url_for('register_new_puzzle') }}">↻ Give me a different book's problem</a>
         <p class="auth-switch">Already have an account? <a href="{{ url_for('login') }}">Sign in</a></p>
     </div>
