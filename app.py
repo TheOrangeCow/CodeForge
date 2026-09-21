@@ -797,6 +797,10 @@ def admin_requests():
     return render_template("admin_requests.html", pending=pending, handled=handled)
 
 
+@app.route("/tandc")
+def tandc():
+    return render_template("tandc.html")
+
 @app.cli.command("init-db")
 def init_db():
     db.create_all()
