@@ -807,6 +807,10 @@ def admin_requests():
 def tandc():
     return render_template("tandc.html")
 
+@app.route("/pp")
+def pp():
+    return render_template("pp.html")
+
 @app.cli.command("init-db")
 def init_db():
     db.create_all()
